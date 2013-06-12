@@ -53,6 +53,7 @@ public abstract class Persistence extends BasePersistence {
 	private static final String INDEX_CREATED_WITH_SUCCESS = "Index created with success, now trying execute the command again";
 	private static final String COLUMN_FAMILY_CREATED_WITH_SUCCESS = "Column Family created with success, now trying execute the command again";
 	private static final String MESSAGE_COLUMN_FAMILY_CREATED = COLUMN_FAMILY_CREATED_WITH_SUCCESS;
+	private static final String DEFAULT_INDEX_NAME = "default";
 	private static final int HASH = 11;
 	private static final int HASH_VALUE = 5;
 	/**
@@ -95,7 +96,6 @@ public abstract class Persistence extends BasePersistence {
      *
      */
     protected <T> List<T> retriveObject(String condiction, String condictionValue, Class<T> persistenceClass, ConsistencyLevelCQL consistLevel, int limit, String condicionValue, IndexColumnName... index) {
-        
     	try {
     		
             StringBuilder cql = new StringBuilder();
@@ -112,8 +112,6 @@ public abstract class Persistence extends BasePersistence {
             Logger.getLogger(Persistence.class.getName()).log(Level.SEVERE, null, exception);
             return new ArrayList<T>();
         }
-
-
     }
 
     //insert commands
@@ -505,8 +503,11 @@ public abstract class Persistence extends BasePersistence {
      *
      */
     public <T> List<T> findByIndex(Object index, Class<T> objectClass) {
-    	
-        return findByIndex(index, objectClass, ConsistencyLevelCQL.ONE);
+        return findByIndex(index, DEFAULT_INDEX_NAME, objectClass, ConsistencyLevelCQL.ONE);
+    }
+    
+    public <T> List<T> findByIndex(Object indexValue, String indexName, Class<T> objectClass) {
+        return findByIndex(indexValue, indexName, objectClass, ConsistencyLevelCQL.ONE);
     }
 
     /**
@@ -520,8 +521,8 @@ public abstract class Persistence extends BasePersistence {
      * 10.000
      * @return list retrieve from the value index
      */
-    public <T>  List<T> findByIndex(Object index, Class<T> objectClass,ConsistencyLevelCQL consistencyLevel) {
-        return findByIndex(index, objectClass, consistencyLevel, DEFAULT_VALUE);
+    public <T>  List<T> findByIndex(Object index, String indexName, Class<T> objectClass,ConsistencyLevelCQL consistencyLevel) {
+        return findByIndex(index, indexName, objectClass, consistencyLevel, DEFAULT_VALUE);
     }
 
     /**
@@ -533,9 +534,9 @@ public abstract class Persistence extends BasePersistence {
      * @param limit - The length of List
      * @return list retrieve from the value index
      */
-    public <T> List<T> findByIndex(Object index, Class<T> objectClass,ConsistencyLevelCQL consistencyLevelCQL, int limit) {
+    public <T> List<T> findByIndex(Object index, String indexName, Class<T> objectClass,ConsistencyLevelCQL consistencyLevelCQL, int limit) {
         String indexString = "'" + EncodingUtil.byteToString(Persistence.getWriteManager().convert(index)) + "'";
-        Field indexField = ColumnUtil.getIndexField(objectClass);
+        Field indexField = ColumnUtil.getIndexField(indexName, objectClass);
         if (indexField == null) {
             try {
                 throw new EasyCassandraException(MESSAGE_USE_ANNOTATION + objectClass.getName()+ FOR_LIST_BY_INDEX);

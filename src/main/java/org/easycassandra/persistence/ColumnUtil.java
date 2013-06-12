@@ -123,6 +123,10 @@ final class ColumnUtil {
     public static Field getIndexField(Class<?> persistenceClass) {
         return getField(persistenceClass, Index.class);
     }
+    
+    public static Field getIndexField(String indexName, Class<?> persistenceClass) {
+        return getIndexField(persistenceClass, indexName, Index.class);
+    }
 
     /**
      * Get the Field of the Object from annotation if there are not return will
@@ -140,6 +144,16 @@ final class ColumnUtil {
             } else if (field.getAnnotation(Embeddable.class) != null) {
                 return getField(field.getType(), annotation);
             }
+        }
+        return null;
+    }
+    
+    public static Field getIndexField(Class<?> object, String indexName, Class<Index> annotation) {
+        for (Field field : object.getDeclaredFields()) {
+        	Index index;
+            if ((index = field.getAnnotation(annotation)) != null && index.name().equals(indexName)) {
+                return field;
+            } 
         }
         return null;
     }

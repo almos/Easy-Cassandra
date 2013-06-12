@@ -684,7 +684,7 @@ class JCassandraImpl implements JCassandra {
     @Override
     public Parameter<?> getParameter(int position) {
         isNegativeValue(position);
-        for (Parameter parameter : getParameters()) {
+        for (Parameter<?> parameter : getParameters()) {
             if (parameter.getPosition().equals(Integer.valueOf(position))) {
                 return parameter;
             }
@@ -695,7 +695,7 @@ class JCassandraImpl implements JCassandra {
 
     @Override
     public Parameter<?> getParameter(String name) {
-        for (Parameter parameter : getParameters()) {
+        for (Parameter<?> parameter : getParameters()) {
             if (((VariableConditions) parameter).getCondition().equals(name)) {
                 return parameter;
             }

@@ -210,7 +210,6 @@ public final class EasyCassandraManager {
      * @return - the Persistence
      */
 	public static Persistence getPersistenceRandom(String keySpace) {
-	
 		return new PersistenceRandom(getListClient(keySpace),referenceSuperColunms, keySpace);
 }
 	/**
