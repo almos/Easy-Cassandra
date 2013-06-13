@@ -19,9 +19,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import javax.persistence.Entity;
 
 import org.apache.cassandra.thrift.Cassandra;
 import org.apache.cassandra.thrift.Cassandra.Client;
@@ -37,6 +40,7 @@ import org.apache.thrift.transport.TSocket;
 import org.easycassandra.EasyCassandraException;
 import org.easycassandra.ReplicaStrategy;
 import org.easycassandra.util.DomUtil;
+import org.reflections.Reflections;
 
 /**
  * Class for manage Connections
@@ -252,6 +256,17 @@ public final class EasyCassandraManager {
         DescribeFamilyObject describeFamilyObject = new DescribeFamilyObject(classColumnFamily);
         familyObjects.put(describeFamilyObject.getClassFamily().getSimpleName(),describeFamilyObject);
         return true;
+    }
+    
+    public static boolean addFamilyObjects(String packageName)
+    {
+    	Reflections reflections = new Reflections(packageName);
+    	Set<Class<?>> annotated = reflections.getTypesAnnotatedWith(Entity.class);
+    	for (Class<?> c : annotated) {
+    		addFamilyObject(c);
+    		System.out.println(c);
+    	}
+    	return true;
     }
 
     /**
