@@ -262,10 +262,8 @@ public final class EasyCassandraManager {
     {
     	Reflections reflections = new Reflections(packageName);
     	Set<Class<?>> annotated = reflections.getTypesAnnotatedWith(Entity.class);
-    	for (Class<?> c : annotated) {
+    	for (Class<?> c : annotated) 
     		addFamilyObject(c);
-    		System.out.println(c);
-    	}
     	return true;
     }
 
